@@ -12,11 +12,12 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class RandomOrderGenerator {
-    static Faker faker = new Faker(new Locale("ru"));
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    static String moscowMetroJson;
+    Gson gson = new Gson();
+    Faker faker = new Faker(new Locale("ru"));
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    String moscowMetroJson;
 
-    static {
+    {
         try {
             moscowMetroJson = Files.readString(Paths.get("src/main/resources/moscowMetro.json"));
         } catch (IOException e) {
@@ -24,47 +25,46 @@ public class RandomOrderGenerator {
         }
     }
 
-    static Gson gson = new Gson();
-    static MoscowMetro[] moscowMetro = gson.fromJson(moscowMetroJson.toString(), MoscowMetro[].class);
+    MoscowMetro[] moscowMetro = gson.fromJson(moscowMetroJson.toString(), MoscowMetro[].class);
 
     //Имя заказчика, записывается в поле firstName таблицы Orders
-    public static String getFirstName() {
+    public String getFirstName() {
         return faker.name().firstName();
     }
 
     //Фамилия заказчика, записывается в поле lastName таблицы Orders
-    public static String getLastName() {
+    public String getLastName() {
         return faker.name().lastName();
     }
 
     //Адрес заказчика, записывается в поле address таблицы Orders
-    public static String getAddress() {
+    public String getAddress() {
         return faker.address().fullAddress();
     }
 
     //Телефон заказчика, записывается в поле phone таблицы Orders
-    public static String getPhone() {
+    public String getPhone() {
         return faker.phoneNumber().phoneNumber();
     }
 
     //Количество дней аренды, записывается в поле rentTime таблицы Orders
-    public static int getRentTime() {
+    public int getRentTime() {
         return faker.number().numberBetween(1, 7);
     }
 
     //Дата доставки, записывается в поле deliveryDate таблицы Orders
-    public static String getDeliveryDate() {
+    public String getDeliveryDate() {
         String deliveryDate = sdf.format(faker.date().future(30, TimeUnit.DAYS));
         return deliveryDate;
     }
 
     //Комментарий от заказчика, записывается в поле comment таблицы Orders
-    public static String getComment() {
+    public String getComment() {
         return faker.lorem().sentence(3, 3);
     }
 
     //Ближайшая к заказчику станция метро, записывается в поле metroStation таблицы Orders
-    public static int getMetroStation() {
+    public int getMetroStation() {
         return moscowMetro[faker.number().numberBetween(1, moscowMetro.length)].getNumber();
     }
 

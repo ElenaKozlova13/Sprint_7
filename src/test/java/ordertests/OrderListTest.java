@@ -1,6 +1,5 @@
 package ordertests;
 
-import com.google.gson.Gson;
 import courier.Courier;
 import courier.CourierClient;
 import io.qameta.allure.Description;
@@ -21,33 +20,32 @@ import static org.junit.Assert.assertEquals;
 
 public class OrderListTest {
     private Courier courier;
-    private CourierClient courierClient;
-    private int courierId;
+    private CourierClient courierClient =  new CourierClient();
+    private RandomCourierGenerator courierGenerator =  new RandomCourierGenerator();
     private Order order;
-    private OrderClient orderClient;
+    private OrderClient orderClient =  new OrderClient();
+    private RandomOrderGenerator orderGenerator =  new RandomOrderGenerator();
+    private int courierId;
     private int track;
     private int orderId;
     private int orderIdInOrders;
 
     @Before
     public void setUp() {
-        Gson gson = new Gson();
-        courierClient = new CourierClient();
         courier = new Courier()
-                .setLogin(RandomCourierGenerator.getLogin())
-                .setPassword(RandomCourierGenerator.getPassword())
-                .setFirstName(RandomCourierGenerator.getFirstName());
-        orderClient = new OrderClient();
+                .setLogin(courierGenerator.getLogin())
+                .setPassword(courierGenerator.getPassword())
+                .setFirstName(courierGenerator.getFirstName());
         order = new Order()
-                .setFirstName(RandomOrderGenerator.getFirstName())
-                .setLastName(RandomOrderGenerator.getLastName())
-                .setAddress(RandomOrderGenerator.getAddress())
-                .setMetroStation(RandomOrderGenerator.getMetroStation())
-                .setPhone(RandomOrderGenerator.getPhone())
-                .setRentTime(RandomOrderGenerator.getRentTime())
-                .setDeliveryDate(RandomOrderGenerator.getDeliveryDate())
-                .setComment(RandomOrderGenerator.getComment())
-                .setColor(RandomOrderGenerator.getColor());
+                .setFirstName(orderGenerator.getFirstName())
+                .setLastName(orderGenerator.getLastName())
+                .setAddress(orderGenerator.getAddress())
+                .setMetroStation(orderGenerator.getMetroStation())
+                .setPhone(orderGenerator.getPhone())
+                .setRentTime(orderGenerator.getRentTime())
+                .setDeliveryDate(orderGenerator.getDeliveryDate())
+                .setComment(orderGenerator.getComment())
+                .setColor(orderGenerator.getColor());
 
         courierClient.createCourier(courier);
         courierId = courierClient.loginCourier(credsFrom(courier)).extract().path("id");

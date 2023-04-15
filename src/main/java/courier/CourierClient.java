@@ -18,7 +18,7 @@ public class CourierClient {
         RestAssured.baseURI = BASE_URI;
     }
     @Step("Создание курьера")
-    public static ValidatableResponse createCourier(Courier courier) {
+    public ValidatableResponse createCourier(Courier courier) {
         return given()
                 .header("Content-type", "application/json")
                 .body(courier)
@@ -27,7 +27,7 @@ public class CourierClient {
                 .then();
     }
     @Step("Логин курьера в системе")
-    public static ValidatableResponse loginCourier(CourierCreds courierCreds) {
+    public ValidatableResponse loginCourier(CourierCreds courierCreds) {
         return given()
                 .header("Content-type", "application/json")
                 .body(courierCreds)
@@ -36,7 +36,7 @@ public class CourierClient {
                 .then();
     }
     @Step("Удаление курьера")
-    public static ValidatableResponse deleteCourier(int courierId) {
+    public ValidatableResponse deleteCourier(int courierId) {
         return given()
                 .when()
                 .delete(COURIER_PATH + courierId)

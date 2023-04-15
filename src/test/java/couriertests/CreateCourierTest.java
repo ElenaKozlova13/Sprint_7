@@ -16,16 +16,16 @@ import static org.junit.Assert.assertEquals;
 
 public class CreateCourierTest {
     private Courier courier;
-    private CourierClient courierClient;
+    private CourierClient courierClient =  new CourierClient();
+    private RandomCourierGenerator courierGenerator =  new RandomCourierGenerator();
     private int courierId;
 
     @Before
     public void setUp() {
-        courierClient = new CourierClient();
         courier = new Courier()
-                .setLogin(RandomCourierGenerator.getLogin())
-                .setPassword(RandomCourierGenerator.getPassword())
-                .setFirstName(RandomCourierGenerator.getFirstName());
+                .setLogin(courierGenerator.getLogin())
+                .setPassword(courierGenerator.getPassword())
+                .setFirstName(courierGenerator.getFirstName());
     }
 
     @Test
@@ -112,7 +112,7 @@ public class CreateCourierTest {
     public void createCourierWithExistingLogin() {
         courierClient.createCourier(courier);
         courierId = courierClient.loginCourier(credsFrom(courier)).extract().path("id");
-        Courier courier2 = courier.setPassword(RandomCourierGenerator.getPassword()).setFirstName(RandomCourierGenerator.getFirstName());
+        Courier courier2 = courier.setPassword(courierGenerator.getPassword()).setFirstName(courierGenerator.getFirstName());
         ValidatableResponse response2 = courierClient.createCourier(courier2);
         assertEquals("Неверный статус код",
                 HttpStatus.SC_CONFLICT,

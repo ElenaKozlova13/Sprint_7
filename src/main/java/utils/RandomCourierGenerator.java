@@ -5,17 +5,17 @@ import java.util.Locale;
 
 public class RandomCourierGenerator {
 
-    static Faker faker = new Faker(new Locale("ru"));
+     Faker faker = new Faker(new Locale("ru"));
 
-    public static String getLogin() {
+    public String getLogin() {
+        return this.faker.internet().password();
+    }//логин в формате пароля для уникальности
+
+    public String getPassword() {
         return faker.internet().password();
     }
 
-    public static String getPassword() {
-        return faker.internet().password();
-    }
-
-    public static String getFirstName() {
+    public String getFirstName() {
         return faker.name().firstName();
     }
 }

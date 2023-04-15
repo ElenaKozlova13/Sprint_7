@@ -38,5 +38,6 @@ build/
 .DS_Store
 
 #target exclude allure-results report
+.allure
 /target/*
 !/target/allure-results

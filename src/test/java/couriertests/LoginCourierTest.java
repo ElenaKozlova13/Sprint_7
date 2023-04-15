@@ -17,16 +17,16 @@ import static org.junit.Assert.assertTrue;
 
 public class LoginCourierTest {
     private Courier courier;
-    private CourierClient courierClient;
+    private CourierClient courierClient =  new CourierClient();
+    private RandomCourierGenerator courierGenerator =  new RandomCourierGenerator();
     private int courierId;
 
     @Before
     public void setUp() {
-        courierClient = new CourierClient();
         courier = new Courier()
-                .setLogin(RandomCourierGenerator.getLogin())
-                .setPassword(RandomCourierGenerator.getPassword())
-                .setFirstName(RandomCourierGenerator.getFirstName());
+                .setLogin(courierGenerator.getLogin())
+                .setPassword(courierGenerator.getPassword())
+                .setFirstName(courierGenerator.getFirstName());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class LoginCourierTest {
     public void loginCourierWithWrongLogin() {
         courierClient.createCourier(courier);
         courierId = courierClient.loginCourier(credsFrom(courier)).extract().path("id");
-        ValidatableResponse wrongLoginResponse = courierClient.loginCourier(credsFrom(courier.setLogin(RandomCourierGenerator.getLogin())));
+        ValidatableResponse wrongLoginResponse = courierClient.loginCourier(credsFrom(courier.setLogin(courierGenerator.getLogin())));
         assertEquals("Неверный статус код",
                 HttpStatus.SC_NOT_FOUND,
                 wrongLoginResponse.extract().statusCode());
@@ -109,7 +109,7 @@ public class LoginCourierTest {
     public void loginCourierWithWrongPassword() {
         courierClient.createCourier(courier);
         courierId = courierClient.loginCourier(credsFrom(courier)).extract().path("id");
-        ValidatableResponse wrongPasswordResponse = courierClient.loginCourier(credsFrom(courier.setPassword(RandomCourierGenerator.getPassword())));
+        ValidatableResponse wrongPasswordResponse = courierClient.loginCourier(credsFrom(courier.setPassword(courierGenerator.getPassword())));
         assertEquals("Неверный статус код",
                 HttpStatus.SC_NOT_FOUND,
                 wrongPasswordResponse.extract().statusCode());

@@ -20,7 +20,8 @@ import static org.junit.Assert.assertNotNull;
 public class CreateOrderTest {
 
     private Order order;
-    private OrderClient orderClient;
+    private OrderClient orderClient =  new OrderClient();
+    private RandomOrderGenerator orderGenerator =  new RandomOrderGenerator();
     private int track;
     private List<String> colorList;
     private int expectedStatusCode;
@@ -32,16 +33,15 @@ public class CreateOrderTest {
 
     @Before
     public void setUp() {
-        orderClient = new OrderClient();
         order = new Order()
-                .setFirstName(RandomOrderGenerator.getFirstName())
-                .setLastName(RandomOrderGenerator.getLastName())
-                .setAddress(RandomOrderGenerator.getAddress())
-                .setMetroStation(RandomOrderGenerator.getMetroStation())
-                .setPhone(RandomOrderGenerator.getPhone())
-                .setRentTime(RandomOrderGenerator.getRentTime())
-                .setDeliveryDate(RandomOrderGenerator.getDeliveryDate())
-                .setComment(RandomOrderGenerator.getComment())
+                .setFirstName(orderGenerator.getFirstName())
+                .setLastName(orderGenerator.getLastName())
+                .setAddress(orderGenerator.getAddress())
+                .setMetroStation(orderGenerator.getMetroStation())
+                .setPhone(orderGenerator.getPhone())
+                .setRentTime(orderGenerator.getRentTime())
+                .setDeliveryDate(orderGenerator.getDeliveryDate())
+                .setComment(orderGenerator.getComment())
                 .setColor(colorList)
         ;
     }

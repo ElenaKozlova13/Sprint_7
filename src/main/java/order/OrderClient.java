@@ -22,7 +22,7 @@ public class OrderClient {
         RestAssured.baseURI = BASE_URI;
     }
     @Step("Создание заказа")
-    public static ValidatableResponse createOrder(Order order) {
+    public ValidatableResponse createOrder(Order order) {
         return given()
                 .header("Content-type", "application/json")
                 .body(order)
@@ -31,7 +31,7 @@ public class OrderClient {
                 .then();
     }
     @Step("Отмена заказа")
-    public static ValidatableResponse cancelOrder(int track) {
+    public ValidatableResponse cancelOrder(int track) {
         return given()
                 .queryParam("track", track)
                 .when()
@@ -39,14 +39,14 @@ public class OrderClient {
                 .then();
     }
     @Step("Завершение заказа")
-    public static ValidatableResponse finishOrder(int orderId) {
+    public ValidatableResponse finishOrder(int orderId) {
         return given()
                 .when()
                 .put(FINISH_ORDER_PATH + orderId)
                 .then();
     }
     @Step("Получение заказа по трэк номеру")
-    public static ValidatableResponse getOrder(int track) {
+    public ValidatableResponse getOrder(int track) {
         return given()
             .queryParam("t", track)
             .when()
@@ -54,7 +54,7 @@ public class OrderClient {
             .then();
     }
     @Step("Назначение заказа на курьера по Id заказа и курьера")
-    public static ValidatableResponse acceptOrder(int courierId, int orderId) {
+    public ValidatableResponse acceptOrder(int courierId, int orderId) {
         return given()
                 .param("courierId", courierId)
                 .when()
@@ -62,7 +62,7 @@ public class OrderClient {
                 .then();
     }
     @Step("Получение списка заказов курьера по Id курьера")
-    public static ValidatableResponse getOrders(int courierId) {
+    public ValidatableResponse getOrders(int courierId) {
         return given()
                 .queryParam("courierId", courierId)
                 .when()

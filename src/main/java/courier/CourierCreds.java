@@ -10,12 +10,6 @@ public class CourierCreds {
         this.password = password;
     }
 
-    public String getLogin() {
-        return login;
-    }
-    public String getPassword() {
-        return password;
-    }
     @Step("Получение учетных данных курьера")
     public static CourierCreds credsFrom(Courier courier) {
         return new CourierCreds(courier.getLogin(), courier.getPassword());
