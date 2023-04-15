@@ -49,37 +49,33 @@ public class OrderListTest {
                 .setComment(RandomOrderGenerator.getComment())
                 .setColor(RandomOrderGenerator.getColor());
 
-        ValidatableResponse createCourierResponse = courierClient.createCourier(courier).statusCode(HttpStatus.SC_CREATED);
-        ValidatableResponse loginCourierResponse = courierClient.loginCourier(credsFrom(courier)).statusCode(HttpStatus.SC_OK);
-        courierId = loginCourierResponse.extract().path("id");
-        ValidatableResponse createOrderResponse = orderClient.createOrder(order).statusCode(HttpStatus.SC_CREATED);
-        track = createOrderResponse.extract().path("track");
-        ValidatableResponse getOrderResponse = orderClient.getOrder(track).statusCode(HttpStatus.SC_OK);
-        orderId = JsonPath.from(getOrderResponse.extract().asPrettyString()).getInt("order.id");
-        ValidatableResponse acceptOrderResponse = orderClient.acceptOrder(courierId, orderId).statusCode(HttpStatus.SC_OK);
-
+        courierClient.createCourier(courier);
+        courierId = courierClient.loginCourier(credsFrom(courier)).extract().path("id");
+        track = orderClient.createOrder(order).extract().path("track");
+        orderId = JsonPath.from(orderClient.getOrder(track).extract().asPrettyString()).getInt("order.id");
+        orderClient.acceptOrder(courierId, orderId);
     }
 
     @Test
-    @DisplayName("get orders and check response body") // имя теста
-    @Description("Проверить, что в тело ответа возвращается список заказов.") // описание теста
+    @DisplayName("get orders and check response body")
+    @Description("Проверить, что в тело ответа возвращается список заказов.")
     public void getOrdersAndCheckResponse() {
         ValidatableResponse getOrdersResponse = orderClient.getOrders(courierId);
+        orderIdInOrders = JsonPath.from(getOrdersResponse.extract().asPrettyString()).getInt("orders[0].id");
         assertEquals("Неверный статус код",
                 HttpStatus.SC_OK,
                 getOrdersResponse.extract().statusCode());
-        orderIdInOrders = JsonPath.from(getOrdersResponse.extract().asPrettyString()).getInt("orders[0].id");
         assertEquals("в списке заказов нет созданного заказа", orderId, orderIdInOrders);
     }
 
     @After
     public void tearDown() {
         if (orderId != 0) {
-            orderClient.finishOrder(orderId).statusCode(HttpStatus.SC_OK);
+            orderClient.finishOrder(orderId);
         }
 
         if (courierId != 0) {
-            courierClient.deleteCourier(courierId).statusCode(HttpStatus.SC_OK);
+            courierClient.deleteCourier(courierId);
         }
     }
 

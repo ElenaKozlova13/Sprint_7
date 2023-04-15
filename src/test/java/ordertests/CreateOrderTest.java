@@ -46,7 +46,7 @@ public class CreateOrderTest {
         ;
     }
 
-    @Parameterized.Parameters
+    @Parameterized.Parameters(name = "Предпочитаемые цвета. Тестовые данные: список цветов {0}, ожидаемый статус-код {1}")
     public static Object[][] getColorData() {
         return new Object[][]{
                 {List.of("BLACK"), HttpStatus.SC_CREATED},
@@ -57,25 +57,25 @@ public class CreateOrderTest {
     }
 
     @Test
-    @DisplayName("create order with optional colors and check response body") // имя теста
+    @DisplayName("create order with optional colors")
     @Description("1. можно указать один из цветов — BLACK или GREY" +
             "2. можно указать оба цвета" +
             "3. можно совсем не указывать цвет" +
-            "4. тело ответа содержит track.") // описание теста
+            "4. тело ответа содержит track.")
     public void createOrderWithOptionalColors() {
         order = order.setColor(colorList);
         ValidatableResponse response = orderClient.createOrder(order);
+        track = response.extract().path("track");
         assertEquals("Неверный статус код",
                 expectedStatusCode,
                 response.extract().statusCode());
-        track = response.extract().path("track");
         assertNotNull("Неверное значение", track);
     }
 
     @After
     public void tearDown() {
         if (track != 0) {
-            orderClient.cancelOrder(track).statusCode(HttpStatus.SC_OK);
+            orderClient.cancelOrder(track);
         }
     }
 }

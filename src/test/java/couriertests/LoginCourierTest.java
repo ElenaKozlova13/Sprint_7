@@ -2,7 +2,6 @@ package couriertests;
 
 import courier.Courier;
 import courier.CourierClient;
-import courier.CourierCreds;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.ValidatableResponse;
@@ -31,26 +30,26 @@ public class LoginCourierTest {
     }
 
     @Test
-    @DisplayName("loginCourier courier and check response body") // имя теста
+    @DisplayName("loginCourier courier")
     @Description("1. курьер может авторизоваться" +
-            "6 успешный запрос возвращает id") // описание теста
+            "6 успешный запрос возвращает id")
     public void loginCourierAndCheckResponse() {
-        ValidatableResponse response = courierClient.createCourier(courier).statusCode(HttpStatus.SC_CREATED);
+        courierClient.createCourier(courier);
         ValidatableResponse loginResponse = courierClient.loginCourier(credsFrom(courier));
+        courierId = loginResponse.extract().path("id");
         assertEquals("Неверный статус код, авторизация не прошла",
                 HttpStatus.SC_OK,
                 loginResponse.extract().statusCode());
-        courierId = loginResponse.extract().path("id");
         assertTrue(courierId != 0);
     }
 
     @Test
-    @DisplayName("loginCourier courier without loginCourier") // имя теста
+    @DisplayName("loginCourier courier without loginCourier")
     @Description("4. если какого-то поля нет, запрос возвращает ошибку, без логина" +
-            "2. для авторизации нужно передать все обязательные поля*") // описание теста
+            "2. для авторизации нужно передать все обязательные поля*")
     public void loginCourierWithoutLogin() {
-        ValidatableResponse response = courierClient.createCourier(courier).statusCode(HttpStatus.SC_CREATED);
-        CourierCreds courierCreds = credsFrom(courier);
+        courierClient.createCourier(courier);
+        courierId = courierClient.loginCourier(credsFrom(courier)).extract().path("id");
         ValidatableResponse withoutLoginResponse = courierClient.loginCourier(credsFrom(courier.setLogin("")));
         assertEquals("Неверный статус код",
                 HttpStatus.SC_BAD_REQUEST,
@@ -58,18 +57,15 @@ public class LoginCourierTest {
         assertEquals("Неверное сообщение",
                 "Недостаточно данных для входа",
                 withoutLoginResponse.extract().path("message"));
-
-        ValidatableResponse loginResponse = courierClient.loginCourier(courierCreds).statusCode(HttpStatus.SC_OK);
-        courierId = loginResponse.extract().path("id");
     }
 
     @Test
-    @DisplayName("loginCourier courier without password") // имя теста
+    @DisplayName("loginCourier courier without password")
     @Description("4. если какого-то поля нет, запрос возвращает ошибку, без пароля" +
-            "2. для авторизации нужно передать все обязательные поля*") // описание теста
+            "2. для авторизации нужно передать все обязательные поля*")
     public void loginCourierWithoutPassword() {
-        ValidatableResponse response = courierClient.createCourier(courier).statusCode(HttpStatus.SC_CREATED);
-        CourierCreds courierCreds = credsFrom(courier);
+        courierClient.createCourier(courier);
+        courierId = courierClient.loginCourier(credsFrom(courier)).extract().path("id");
         ValidatableResponse withoutPasswordResponse = courierClient.loginCourier(credsFrom(courier.setPassword("")));
         assertEquals("Неверный статус код",
                 HttpStatus.SC_BAD_REQUEST,
@@ -77,14 +73,11 @@ public class LoginCourierTest {
         assertEquals("Неверное сообщение",
                 "Недостаточно данных для входа",
                 withoutPasswordResponse.extract().path("message"));
-
-        ValidatableResponse loginResponse = courierClient.loginCourier(courierCreds).statusCode(HttpStatus.SC_OK);
-        courierId = loginResponse.extract().path("id");
     }
 
     @Test
-    @DisplayName("loginCourier not existing courier") // имя теста
-    @Description("5. если авторизоваться под несуществующим пользователем, запрос возвращает ошибку") // описание теста
+    @DisplayName("loginCourier not existing courier")
+    @Description("5. если авторизоваться под несуществующим пользователем, запрос возвращает ошибку")
     public void loginNotExistingCourier() {
         ValidatableResponse loginResponse = courierClient.loginCourier(credsFrom(courier));
         assertEquals("Неверный статус код",
@@ -96,13 +89,11 @@ public class LoginCourierTest {
     }
 
     @Test
-    @DisplayName("loginCourier courier with wrong loginCourier") // имя теста
+    @DisplayName("loginCourier courier with wrong login")
     @Description("3 система вернёт ошибку, если неправильно указать логин или пароль - неверный логин")
-    // описание теста
     public void loginCourierWithWrongLogin() {
-        ValidatableResponse response = courierClient.createCourier(courier).statusCode(HttpStatus.SC_CREATED);
-        CourierCreds courierCreds = credsFrom(courier);
-        // System.out.println("!!!!!!" + RandomCourierGenerator.getLogin());
+        courierClient.createCourier(courier);
+        courierId = courierClient.loginCourier(credsFrom(courier)).extract().path("id");
         ValidatableResponse wrongLoginResponse = courierClient.loginCourier(credsFrom(courier.setLogin(RandomCourierGenerator.getLogin())));
         assertEquals("Неверный статус код",
                 HttpStatus.SC_NOT_FOUND,
@@ -110,18 +101,14 @@ public class LoginCourierTest {
         assertEquals("Неверное сообщение",
                 "Учетная запись не найдена",
                 wrongLoginResponse.extract().path("message"));
-
-        ValidatableResponse loginResponse = courierClient.loginCourier(courierCreds).statusCode(HttpStatus.SC_OK);
-        courierId = loginResponse.extract().path("id");
     }
 
     @Test
-    @DisplayName("loginCourier courier with wrong password") // имя теста
+    @DisplayName("loginCourier courier with wrong password")
     @Description("3 система вернёт ошибку, если неправильно указать логин или пароль - неверный пароль")
-    // описание теста
     public void loginCourierWithWrongPassword() {
-        ValidatableResponse response = courierClient.createCourier(courier).statusCode(HttpStatus.SC_CREATED);
-        CourierCreds courierCreds = credsFrom(courier);
+        courierClient.createCourier(courier);
+        courierId = courierClient.loginCourier(credsFrom(courier)).extract().path("id");
         ValidatableResponse wrongPasswordResponse = courierClient.loginCourier(credsFrom(courier.setPassword(RandomCourierGenerator.getPassword())));
         assertEquals("Неверный статус код",
                 HttpStatus.SC_NOT_FOUND,
@@ -129,15 +116,12 @@ public class LoginCourierTest {
         assertEquals("Неверное сообщение",
                 "Учетная запись не найдена",
                 wrongPasswordResponse.extract().path("message"));
-
-        ValidatableResponse loginResponse = courierClient.loginCourier(courierCreds).statusCode(HttpStatus.SC_OK);
-        courierId = loginResponse.extract().path("id");
     }
 
     @After
     public void tearDown() {
         if (courierId != 0) {
-            courierClient.deleteCourier(courierId).statusCode(HttpStatus.SC_OK);
+            courierClient.deleteCourier(courierId);
         }
     }
 }
